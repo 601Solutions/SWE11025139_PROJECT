@@ -24,4 +24,8 @@
 ### prerequisites
 
 - Python 3.12.10
-## 내 손안의 반려동물 지킴이 찌끼미
+- Python Virtual Environments > venv (optional)
+
+##### Platform
+- Streamlit
+- FastAPI
