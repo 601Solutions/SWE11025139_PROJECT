@@ -29,3 +29,6 @@
 ##### Platform
 - Streamlit
 - FastAPI
+
+### Scheduler
+- https://www.notion.so/601-Solutions-SW-Development-Project-27c7ff874b35803db680e5d5ea2fe501?source=copy_link
