@@ -5,27 +5,32 @@
 
 | **이름** | **역할** |
 |:---:|:---:|
-| 정준혁 |  |
-| 전혁건 |  |
-| 문기준 |  |
-| 김도원 |  |
+| 정준혁 | Team Lead, Product Manager |
+| 전혁건 | Scrum Master, Documnet Manager |
+| 문기준 | Platform Engineer |
+| 김도원 | LLM Engineer |
 
 ---
 
-### Introduction
+### Introduction 
 
-**LLM 기반 펫 헬스케어 서비스**
+**LLM + RAG 기반 강아지 헬스케어 서비스**
 
 
 - RAG와 연결한 LLM으로 챗봇을 만들고 반려 동물의 종, 특성에 따라 적합한 의약품을 추천하는 복약 지도 시스템을 개발한다.
 
 - 내 손안의 반려동물 지킴이 '찌낌이'
 
-### prerequisites
+### prerequisites 💻
 
 - Python 3.12.10
 - Python Virtual Environments > venv (optional)
+- OpenAI API
 
-##### Platform
+##### Platform ⚒️
 - Streamlit
 - FastAPI
+- FAISS
+- ChromaDB
+- sqlite
+- MySQL
