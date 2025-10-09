@@ -1,4 +1,6 @@
-
-# python virtual enviroments
 .env
 .venv
+api.py
+*.pyc
+__pycache__/*
+venv/*
