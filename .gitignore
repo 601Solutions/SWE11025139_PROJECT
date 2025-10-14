@@ -4,3 +4,4 @@ api.py
 *.pyc
 __pycache__/*
 venv/*
+*.csv
