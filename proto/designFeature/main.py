@@ -1,8 +1,7 @@
+import sqlite3
 import streamlit as st
 from dog_info import show_dog_info_page
 from chatbot import show_chatbot_page
-import sqlite3
-from passlib.hash import bcrypt
 
 DB_PATH = "pet_healthcare.db"
 
@@ -17,37 +16,23 @@ def user_exists(username):
     conn.close()
     return res
 
-def safe_hash_password(password: str) -> str:
-    if not password:
-        raise ValueError("Password should not be empty")
-    pw_bytes = password.encode("utf-8")[:72]  # utf-8 인코딩 후 72바이트 제한
-    return bcrypt.hash(pw_bytes)
-
-def safe_verify_password(password: str, hashed: str) -> bool:
-    if not password:
-        return False
-    pw_bytes = password.encode("utf-8")[:72]
-    return bcrypt.verify(pw_bytes, hashed)
-
 def add_user(username: str, password: str):
     conn = get_connection()
     c = conn.cursor()
-    hashed = safe_hash_password(password)
-    c.execute("INSERT INTO users (username, hashed_password) VALUES (?, ?)", (username, hashed))
+    # 패스워드를 평문으로 저장
+    c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
     conn.commit()
     conn.close()
 
 def verify_user(username: str, password: str) -> bool:
     conn = get_connection()
     c = conn.cursor()
-    c.execute("SELECT hashed_password FROM users WHERE username = ?", (username,))
+    c.execute("SELECT password FROM users WHERE username = ?", (username,))
     row = c.fetchone()
     conn.close()
     if row is None:
         return False
-    return safe_verify_password(password, row[0])
-
-
+    return password == row[0]  # 평문 비교
 
 def login_ui():
     st.header("로그인")
