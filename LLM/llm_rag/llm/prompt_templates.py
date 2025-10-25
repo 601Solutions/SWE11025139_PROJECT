@@ -1,17 +1,29 @@
 # llm_rag/llm/prompt_templates.py
 
-RAG_PROMPT_TEMPLATE = """
-당신은 반려동물 영양제 및 의약품 전문가입니다. 
-사용자의 질문에 대해 아래 [참고 자료]를 바탕으로 답변을 생성해주세요.
-참고 자료에 없는 내용이나 질문과 관련 없는 내용은 답변하지 마세요.
-답변은 친절하고 명확하게 구성해주세요.
-항상 답변 마지막에는 수의사와의 상담이 필수적이라는 내용을 언급해 주세요.
+from langchain_core.prompts import PromptTemplate
 
-[참고 자료]
+RAG_PROMPT_TEMPLATE = """당신은 반려동물 건강 전문가입니다.
+
+{dog_profile}
+
+다음 정보를 참고하여 질문에 답변해주세요:
+
+참고 정보:
 {context}
 
-[질문]
-{question}
+사용자 질문: {question}
 
-[답변]
-"""
+답변 시 주의사항:
+1. 위 반려견의 나이, 체중, 견종, 기존 질환을 고려하여 개인화된 답변을 제공하세요.
+2. 알레르기나 복용 중인 약물이 있다면 반드시 고려해주세요.
+3. 참고 정보에 기반하여 정확한 답변을 제공하세요.
+4. 확실하지 않은 정보는 수의사 상담을 권장하세요.
+5. 친근하고 이해하기 쉬운 말투로 답변하세요.
+
+답변:"""
+
+
+QA_CHAIN_PROMPT = PromptTemplate(
+    input_variables=["context", "question"],
+    template=RAG_PROMPT_TEMPLATE,
+)
