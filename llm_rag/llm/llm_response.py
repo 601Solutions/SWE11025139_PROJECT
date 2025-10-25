@@ -1,6 +1,6 @@
 # llm_rag/llm/llm_response.py
 
-from openai import OpenAI
+from google.generativeai import genai
 from .. import config
 from .prompt_templates import RAG_PROMPT_TEMPLATE
 
@@ -10,7 +10,7 @@ def get_llm_client():
 
     global _llm_client
     if _llm_client is None:
-        _llm_client = OpenAI(api_key=config.OPENAI_API_KEY)
+        _llm_client = genai(api_key=config.GOOGLE_API_KEY)
     return _llm_client
 
 def generate_response(context: str, question: str) -> str:
