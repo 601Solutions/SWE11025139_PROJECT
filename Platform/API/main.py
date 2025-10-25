@@ -1,3 +1,5 @@
+# FastAPI Chat API
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 

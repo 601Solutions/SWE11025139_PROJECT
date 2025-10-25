@@ -32,22 +32,17 @@ def get_message(input_message: str) -> str:
 
 
 
-
-# 웹 정보 설정 및 UI
-st.set_page_config(page_title="멍멍닥터 챗봇", page_icon="🐾")
-
-st.title("🐾 멍멍닥터: 강아지 건강 어드바이스 Demo")
-st.markdown("---")
-
-
-# 세션 상태 변수 초기화
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "current_step" not in st.session_state:
-    st.session_state.current_step = "start"
-
-
 def show_chatbot_page():
+
+    # 웹 정보 설정 및 UI
+    st.set_page_config(page_title="내 손 안의 반려견 지킴이", page_icon="🐾")
+
+
+    # 세션 상태 변수 초기화
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    if "current_step" not in st.session_state:
+        st.session_state.current_step = "start"
 
     # 메시지 출력 함수
     def show_message(role, content, image=None):
