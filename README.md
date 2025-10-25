@@ -69,21 +69,27 @@ feature/LLM/
 
 1. Python 가상환경 생성 및 활성화
 
+```
     conda create -n swe_project python=3.10
     conda activate swe_project
+```
 
 2. 필요 라이브러리 설치
 
+```
     pip install -r requirements.txt
+```
 
 3. Google Gemini API Key 설정
 
     - Windows
+    ```
         $env:GOOGLE_API_KEY = "your_api_key_here"
-    
+    ```
     - Linux/MacOS
+    ```
         export GOOGLE_API_KEY="your_api_key_here"
-
+    ```
 
 시스템 실행 방법
 ------------
@@ -92,14 +98,14 @@ feature/LLM/
 
 1. 벡터 DB 생성(최초 1회)
 - 루트 폴더에서 database/ingest_data.py를 실행하여 persistent_chroma_db 생성
-
+    ```
         python database/ingest_data.py
-
+    ```
 2. RAG 질의응답 시스템 실행
 - DB 생성 완료 이후, app/main.py를 실행하여 RAG 시스템 시작
-
+    ```
     python app/main.py
-
+    ```
 *실행 후, 터미널에서 바로 질문을 입력하여 사용할 수 있습니다.*
 
 
