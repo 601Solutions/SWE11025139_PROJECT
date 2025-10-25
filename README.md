@@ -11,7 +11,6 @@ feature/LLM/
 ├── data/                  # 데이터 관련
 │   ├── raw/               # 원본 데이터 
 │   ├── processed/         # 전처리된 데이터
-│   ├── crawled/           # 웹 크롤링 결과
 │   └── schema/            # DB 스키마 정의
 │
 ├── database/              # DB 구축 코드
@@ -70,8 +69,8 @@ feature/LLM/
 1. Python 가상환경 생성 및 활성화
 
 ```
-    conda create -n swe_project python=3.10
-    conda activate swe_project
+    conda create -n myDogs python=3.10
+    conda activate myDogs
 ```
 
 2. 필요 라이브러리 설치
