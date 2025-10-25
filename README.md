@@ -16,7 +16,7 @@ feature/LLM/
 │
 ├── database/              # DB 구축 코드
 │   ├── create_tables.sql  # 테이블 생성 스크립트
-│   ├── ingest_data.py     # (중요) DB 벡터 생성 스크립트
+│   ├── ingest_data.py     # DB 벡터 생성 스크립트
 │   └── db_connection.py   # DB 연결 관리 코드
 │
 ├── llm_rag/               # LLM + RAG 시스템
@@ -62,6 +62,7 @@ feature/LLM/
     ├── main.py            # RAG 시스템 실행 엔트리포인트
     └── api_routes.py      # API endpoint 관리
 
+```
 
 설치 방법
 -------
