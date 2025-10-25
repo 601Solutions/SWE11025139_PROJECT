@@ -1,4 +1,7 @@
-# SWE11025139_PROJECT
+# 내 손 안의 반려동물 지킴이
+## 우리 강아지는 좋은 것만 줘야하니까.
+
+![Image](https://github.com/user-attachments/assets/0c9df845-164a-46c2-ba50-7676bf00cfbd)
 
 ### 601 Solutions (TEAM 8)
 
