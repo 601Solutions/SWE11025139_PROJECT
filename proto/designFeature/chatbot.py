@@ -3,7 +3,7 @@ import streamlit as st
 from chat_scenarios_keyword import conversation
 
 def show_chatbot_page():
-    st.set_page_config(page_title="멍멍닥터 챗봇", page_icon="🐾")
+    st.set_page_config(page_title="내 손 안의 반려견 지킴이", page_icon="🐾")
 
     # 세션 상태 변수 초기화
     if "messages" not in st.session_state:
@@ -11,7 +11,7 @@ def show_chatbot_page():
     if "current_step" not in st.session_state:
         st.session_state.current_step = "start"
 
-    st.title("🐾 멍멍닥터: 강아지 건강 어드바이스")
+    st.title("🐾 무엇이든 물어보세요!")
     st.markdown("---")
 
     # 메시지 출력 함수

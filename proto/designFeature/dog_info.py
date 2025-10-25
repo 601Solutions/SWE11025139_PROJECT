@@ -1,6 +1,6 @@
 import streamlit as st
 import sqlite3
-from passlib.hash import bcrypt
+from datetime import datetime
 
 DB_PATH = "pet_healthcare.db"
 
@@ -29,10 +29,20 @@ def create_tables():
             FOREIGN KEY(owner_id) REFERENCES users(id)
         )
     ''')
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS change_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            dog_id INTEGER NOT NULL,
+            field_name TEXT NOT NULL,
+            old_value TEXT,
+            new_value TEXT,
+            changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(dog_id) REFERENCES dogs(id)
+        )
+    ''')
     conn.commit()
     conn.close()
 
-# 사용자 유효성 검사
 def validate_dog_info(name, breed, age, weight):
     errors = []
     if not name or any(char in "!@#$%^&*()" for char in name):
@@ -45,7 +55,6 @@ def validate_dog_info(name, breed, age, weight):
         errors.append("체중은 0보다 커야 합니다.")
     return errors
 
-# 강아지 정보 저장 함수
 def save_dog_info(name, breed, age, weight, health, owner_id):
     conn = get_connection()
     c = conn.cursor()
@@ -53,46 +62,186 @@ def save_dog_info(name, breed, age, weight, health, owner_id):
         INSERT INTO dogs(name, breed, age, weight, health, owner_id)
         VALUES (?, ?, ?, ?, ?, ?)
     ''', (name, breed, age, weight, health, owner_id))
+    dog_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    return dog_id
+
+def update_dog_info(dog_id, breed, age, weight, health):
+    conn = get_connection()
+    c = conn.cursor()
+    
+    c.execute("SELECT breed, age, weight, health FROM dogs WHERE id=?", (dog_id,))
+    old_data = c.fetchone()
+    
+    if old_data:
+        old_breed, old_age, old_weight, old_health = old_data
+        if old_breed != breed:
+            c.execute("INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
+                     (dog_id, "Breed", old_breed, breed))
+        if old_age != age:
+            c.execute("INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
+                     (dog_id, "Age", str(old_age), str(age)))
+        if old_weight != weight:
+            c.execute("INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
+                     (dog_id, "Weight", str(old_weight), str(weight)))
+        if old_health != health:
+            c.execute("INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
+                     (dog_id, "Status", old_health or "", health or ""))
+    
+    c.execute("UPDATE dogs SET breed=?, age=?, weight=?, health=? WHERE id=?",
+             (breed, age, weight, health, dog_id))
     conn.commit()
     conn.close()
 
-# 유저 아이디 조회 함수
 def get_user_id(username):
     conn = get_connection()
     c = conn.cursor()
     c.execute("SELECT id FROM users WHERE username = ?", (username,))
     result = c.fetchone()
     conn.close()
-    if result:
-        return result[0]
-    return None
+    return result[0] if result else None
+
+def get_dog_info(owner_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT id, name, breed, age, weight, health FROM dogs WHERE owner_id=? ORDER BY id DESC LIMIT 1", (owner_id,))
+    result = c.fetchone()
+    conn.close()
+    return result
+
+def get_change_history(dog_id):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        SELECT field_name, old_value, new_value, changed_at 
+        FROM change_history 
+        WHERE dog_id=? 
+        ORDER BY changed_at DESC
+    """, (dog_id,))
+    results = c.fetchall()
+    conn.close()
+    return results
 
 def show_dog_info_page():
-    st.title("강아지 정보 등록")
+    st.set_page_config(page_title="내 손 안의 반려견 지킴이", page_icon="🐾")
+    st.markdown("""
+    <style>
+    .main { background-color: #f5f7fa; }
+    .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #1e3a8a;
+        margin: 0 0 20px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e3e8ef;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     if "username" not in st.session_state or not st.session_state.username:
         st.warning("로그인 후 이용해 주세요.")
         return
 
-    name = st.text_input("강아지 이름")
-    breed = st.text_input("품종")
-    age = st.number_input("나이(년)", min_value=0)
-    weight = st.number_input("체중(kg)", min_value=0.0, step=0.1)
-    health = st.text_area("기타 건강 상태")
+    user_id = get_user_id(st.session_state.username)
+    if user_id is None:
+        st.error("유저를 찾을 수 없습니다. 다시 로그인 해주세요.")
+        return
 
-    if st.button("저장"):
-        errors = validate_dog_info(name, breed, age, weight)
-        if errors:
-            for err in errors:
-                st.error(err)
-            return
+    dog_info = get_dog_info(user_id)
+    
+    if "edit_mode" not in st.session_state:
+        st.session_state.edit_mode = False if dog_info else True
 
-        user_id = get_user_id(st.session_state.username)
-        if user_id is None:
-            st.error("유저를 찾을 수 없습니다. 다시 로그인 해주세요.")
-            return
+    # === 편집 모드 ===
+    if st.session_state.edit_mode:
+        with st.container(border=True):  # border=True로 카드 효과
+            default_breed = dog_info[2] if dog_info else ""
+            default_age = dog_info[3] if dog_info else 0
+            default_weight = dog_info[4] if dog_info else 0.0
+            default_health = dog_info[5] if dog_info else ""
+            
+            st.text_input("견종", value=default_breed, key="input_breed")
+            st.number_input("나이", min_value=0, value=int(default_age), key="input_age")
+            st.number_input("체중", min_value=0.0, step=0.1, value=float(default_weight), key="input_weight")
+            st.text_input("상태", value=default_health, key="input_status")
 
-        save_dog_info(name, breed, age, weight, health, user_id)
-        st.success("강아지 정보가 저장되었습니다.")
+            col1, col2, col3 = st.columns([6, 1, 1])
+            with col3:
+                done = st.button("완료", type="primary", use_container_width=True)
 
-# 테이블 한번 생성 (앱 최초 실행 시)
+            if done:
+                breed = st.session_state.input_breed
+                age = st.session_state.input_age
+                weight = st.session_state.input_weight
+                status = st.session_state.input_status
+                
+                errors = validate_dog_info("My Dog", breed, age, weight)
+                if errors:
+                    for err in errors:
+                        st.error(err)
+                else:
+                    if dog_info:
+                        update_dog_info(dog_info[0], breed, age, weight, status)
+                        st.success("강아지 정보가 수정되었습니다.")
+                    else:
+                        save_dog_info("My Dog", breed, age, weight, status, user_id)
+                        st.success("강아지 정보가 저장되었습니다.")
+                    st.session_state.edit_mode = False
+                    st.rerun()
+
+    # === 조회 모드 ===
+    else:
+        with st.container(border=True):
+            st.markdown('<p class="card-title">✦ 우리 강아지</p>', unsafe_allow_html=True)
+            
+            if dog_info:
+                st.markdown(f"**견종:** {dog_info[2]}")
+                st.markdown(f"**나이:** {dog_info[3]}")
+                st.markdown(f"**체중:** {dog_info[4]:.1f}")
+                st.markdown(f"**상태:** {dog_info[5] or '-'}")
+
+            col1, col2, col3 = st.columns([6, 1, 1])
+            with col3:
+                if st.button("EDIT", type="secondary", use_container_width=True):
+                    st.session_state.edit_mode = True
+                    st.rerun()
+
+    # === Change History ===
+    with st.container(border=True):
+        st.markdown('<p class="card-title">✦ 변경 이력</p>', unsafe_allow_html=True)
+        
+        if dog_info:
+            history = get_change_history(dog_info[0])
+            if history:
+                history_data = []
+                for h in history:
+                    field_name = h[0]
+                    old_value = h[1]
+                    new_value = h[2]
+                    
+                    # Weight 필드만 소수점 1자리 포맷
+                    if field_name == "Weight":
+                        try:
+                            old_value = f"{float(old_value):.1f}"
+                        except:
+                            pass
+                        try:
+                            new_value = f"{float(new_value):.1f}"
+                        except:
+                            pass
+                    
+                    history_data.append({
+                        "항목": field_name, 
+                        "이전값": old_value, 
+                        "변경값": new_value, 
+                        "변경일시": h[3][:19]
+                    })
+                
+                st.dataframe(history_data, use_container_width=True, hide_index=True)
+            else:
+                st.info("변경 이력이 없습니다.")
+        else:
+            st.info("등록된 강아지 정보가 없습니다.")
+
 create_tables()
