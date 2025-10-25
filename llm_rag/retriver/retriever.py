@@ -1,40 +1,62 @@
 # llm_rag/retriever/retriever.py
+import os
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.chains.query_constructor.base import AttributeInfo
+from langchain.retrievers.self_query.base import SelfQueryRetriever
+from .. import config
+from ..llm.llm_loader import get_llm 
 
-from ..embeddings.embedder import get_embedding_model
-from ..embeddings.vectorstore_chroma import get_vector_collection
+_retriever = None
 
-def retrieve_context(query_text: str, k: int = 5):
-    model = get_embedding_model()
-    collection = get_vector_collection()
+def get_rag_retriever():
     
-    if collection is None:
-        return "Error: Vector DB Collection not found.", []
+    # ChromaDB와 SelfQueryRetriever 로드
 
-    # 1. 질문 임베딩
-    query_embedding = model.encode(query_text)
+    global _retriever
+    if _retriever is not None:
+        return _retriever
+
+    # 1. 임베딩 모델 로드
+    print("🔍 임베딩 모델 로딩 중...")
+    embeddings = HuggingFaceEmbeddings(model_name=config.EMBEDDING_MODEL)
+
+    # 2. DB 불러오기
+    print(f"📂 '{config.DB_DIR}'에서 벡터 DB 로딩 중...")
+    if not os.path.exists(config.DB_DIR):
+        print(f"❌ 오류: '{config.DB_DIR}' 폴더를 찾을 수 없습니다.")
+        print("먼저 'database/ingest_data.py'를 실행하여 DB를 생성하세요.")
+        return None
+
+    vectorstore = Chroma(
+        persist_directory=str(config.DB_DIR), 
+        embedding_function=embeddings
+    )
+
+    # 3. Self-Query Retriever 설정 (정확한 제품명 검색용)
+    metadata_field_info = [
+        AttributeInfo(
+            name="product_name",
+            description="건강기능식품 또는 의약품의 제품명. (예: '더 릴렉스')",
+            type="string",
+        ),
+        AttributeInfo(
+            name="source_type",
+            description="정보의 출처 ('건강기능식품' 또는 '동물용의약품')",
+            type="string", 
+        ),
+    ]
+    document_content_description = "반려동물 건강기능식품 또는 의약품의 상세 정보 (효능, 용법, 주의사항 등)"
+
+    llm = get_llm() # Self-query를 위해 LLM 로드
     
-    # 2. ChromaDB 쿼리
-    results = collection.query(
-        query_embeddings=[query_embedding.tolist()],
-        n_results=k
+    _retriever = SelfQueryRetriever.from_llm(
+        llm,
+        vectorstore,
+        document_content_description,
+        metadata_field_info,
+        verbose=True 
     )
     
-    # 3. LLM에 전달할 컨텍스트 생성 (원본 로직과 동일)
-    context_str = ""
-    retrieved_metadatas = results['metadatas'][0]
-    
-    sources = [] # 근거 자료 추적
-    
-    for i, meta in enumerate(retrieved_metadatas):
-        product_name = meta.get('product_name', 'N/A')
-        efficacy = meta.get('efficacy', 'N/A')
-        dosage = meta.get('dosage', 'N/A')
-        
-        context_str += f"문서 {i+1}:\n"
-        context_str += f"  - 제품명: {product_name}\n"
-        context_str += f"  - 효능효과: {efficacy}\n"
-        context_str += f"  - 용법용량: {dosage}\n\n"
-        
-        sources.append(meta) # 메타데이터 전체를 소스로 추가
-        
-    return context_str, sources
+    print("✅ Self-Query Retriever (질문 모듈) 준비 완료.")
+    return _retriever

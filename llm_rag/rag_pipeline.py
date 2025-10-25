@@ -1,40 +1,30 @@
 # llm_rag/rag_pipeline.py
+from langchain.chains import RetrievalQA
+from .llm.llm_loader import get_llm
+from .retriever.retriever import get_rag_retriever
+from .llm.prompt_templates import QA_CHAIN_PROMPT
 
-from .retriever.retriever import retrieve_context
-from .llm.llm_response import generate_response
+_rag_chain = None
 
-def ask(question: str):
-    """
-    사용자 질문에 대해 RAG 파이프라인을 실행합니다.
-    (Retrieve -> Generate)
-    """
-    print(f"🔄 질문 처리 중: \"{question}\"")
+def get_rag_chain():
+   
+    global _rag_chain
+    if _rag_chain is not None:
+        return _rag_chain
+        
+    print("🔄 RAG 파이프라인 구성 중...")
+    llm = get_llm()
+    retriever = get_rag_retriever()
     
-    # 1. Retrieve: 관련 문서 및 컨텍스트 검색
-    print("🔍 문서를 검색합니다...")
-    context_str, sources = retrieve_context(question, k=5)
-    
-    if "Error:" in context_str:
-        print(f"오류: {context_str}")
-        return
-    
-    print("✅ 문서 검색 완료.")
-    
-    # 2. Generate: LLM에 답변 요청
-    print("🤖 답변을 생성합니다...")
-    answer = generate_response(context_str, question)
-    print("✅ 답변 생성 완료.")
-    
-    return answer, context_str # 원본 스크립트처럼 답변과 컨텍스트 반환
-
-# --- 이 파일을 직접 실행할 때 테스트 (원본 스크립트의 main 부분) ---
-if __name__ == "__main__":
-    test_question = "강아지 피부가 건조한데 오메가3 영양제 추천해줘"
-    
-    final_answer, context = ask(test_question)
-    
-    print("\n" + "="*50)
-    print(f"질문: {test_question}")
-    print(f"\n답변:\n{final_answer}")
-    print(f"\n[참고한 자료]\n{context}")
-    print("="*50)
+    if llm is None or retriever is None:
+        print("❌ 오류: LLM 또는 Retriever 초기화 실패.")
+        return None
+        
+    _rag_chain = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+        chain_type_kwargs={"prompt": QA_CHAIN_PROMPT}
+    )
+    print("✅ RAG 질의응답 시스템이 준비되었습니다.\n")
+    return _rag_chain

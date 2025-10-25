@@ -1,5 +1,7 @@
 # llm_rag/llm/prompt_templates.py
 
+from langchain.prompts import PromptTemplate
+
 RAG_PROMPT_TEMPLATE = """
 당신은 반려동물 영양제 및 의약품 전문가입니다. 
 사용자의 질문에 대해 아래 [참고 자료]를 바탕으로 답변을 생성해주세요.
@@ -15,3 +17,9 @@ RAG_PROMPT_TEMPLATE = """
 
 [답변]
 """
+
+
+QA_CHAIN_PROMPT = PromptTemplate(
+    input_variables=["context", "question"],
+    template=RAG_PROMPT_TEMPLATE,
+)
