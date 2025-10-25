@@ -11,7 +11,7 @@ def show_chatbot_page():
     if "current_step" not in st.session_state:
         st.session_state.current_step = "start"
 
-    st.title("🐾 멍멍닥터: 강아지 건강 어드바이스")
+    st.title("🐾 멍멍닥터: 강아지 건강 어드바이스 Demo")
     st.markdown("---")
 
     # 메시지 출력 함수
