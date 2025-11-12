@@ -1,4 +1,10 @@
-# llm_rag/rag_pipeline.py
+#====================================================
+# Author: 601 Solutions
+# Title: rag_pipeline.py
+# llm을 langchain과 호환되도록 변환 후 load하는 코드
+#====================================================
+
+
 from langchain.chains import RetrievalQA
 from .llm.llm_loader import get_llm
 from .retriever.retriever import get_rag_retriever
