@@ -18,7 +18,16 @@ DB_DIR = 'persistent_chroma_db' # DB가 저장
 
 
 def load_and_process_supplements(filepath):
-    # 건강기능식품 처리
+    """
+    CSV 파일에서 건강기능식품 데이터를 로드하여 LangChain Document 객체 리스트로 변환.
+
+    Args:
+        filepath (str): 로드할 건강기능식품 CSV 파일 경로.
+
+    Returns:
+        list[Document]: 변환된 Document 객체의 리스트.
+    """
+    #건강기능식품 처리
     try:
         df = pd.read_csv(filepath)
     except FileNotFoundError:
@@ -42,7 +51,16 @@ def load_and_process_supplements(filepath):
     return documents
 
 def load_and_process_medicines(filepath):
-    # 의약품 처리
+    """
+    CSV 파일에서 동물용의약품 데이터를 로드하여 LangChain Document 객체 리스트로 변환.
+
+    Args:
+        filepath (str): 로드할 동물용의약품 CSV 파일 경로.
+
+    Returns:
+        list[Document]: 변환된 Document 객체의 리스트.
+    """
+    #의약품 처리
     try:
         df = pd.read_csv(filepath)
     except FileNotFoundError:
@@ -73,6 +91,15 @@ def load_and_process_medicines(filepath):
     return documents
 
 def main():
+    """
+    데이터 로드, 임베딩, Chroma 벡터 DB 생성 및 저장을 위한 메인 파이프라인을 실행.
+
+    Args:
+        None
+
+    Returns:
+        None (콘솔에 진행 상황 및 결과를 출력.)
+    """
     # 1. 두 CSV 파일에서 모든 Document 로드
     all_documents = []
     all_documents.extend(load_and_process_supplements(SUPPLEMENT_CSV))
