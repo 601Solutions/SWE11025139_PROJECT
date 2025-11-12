@@ -1,3 +1,9 @@
+#====================================================
+# Author: 601 Solutions
+# Title: ingest_data.py
+# 데이터 처리 및 저장
+#====================================================
+
 import pandas as pd
 import os
 from langchain.schema import Document
@@ -16,7 +22,7 @@ def load_and_process_supplements(filepath):
     try:
         df = pd.read_csv(filepath)
     except FileNotFoundError:
-        print(f"❌ 오류: '{filepath}' 파일을 찾을 수 없습니다.")
+        print(f"오류: '{filepath}' 파일을 찾을 수 없습니다.")
         return []
         
     df = df.fillna('') # 결측치 처리
@@ -32,7 +38,7 @@ def load_and_process_supplements(filepath):
             }
         )
         documents.append(doc)
-    print(f"✅ 건강기능식품 {len(documents)}개 로드 완료.")
+    print(f"건강기능식품 {len(documents)}개 로드 완료.")
     return documents
 
 def load_and_process_medicines(filepath):
@@ -40,7 +46,7 @@ def load_and_process_medicines(filepath):
     try:
         df = pd.read_csv(filepath)
     except FileNotFoundError:
-        print(f"❌ 오류: '{filepath}' 파일을 찾을 수 없습니다.")
+        print(f"오류: '{filepath}' 파일을 찾을 수 없습니다.")
         return []
 
     cols_to_fill = ['product_name', 'efficacy', 'dosage', 'precautions', 'item_seq']
@@ -63,7 +69,7 @@ def load_and_process_medicines(filepath):
             }
         )
         documents.append(doc)
-    print(f"✅ 의약품 {len(documents)}개 로드 완료.")
+    print(f"의약품 {len(documents)}개 로드 완료.")
     return documents
 
 def main():
@@ -79,7 +85,7 @@ def main():
     # 2. 임베딩 모델 로드
     print(f"\n임베딩 모델({EMBEDDING_MODEL}) 로딩 중...")
     embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
-    print("✅ 임베딩 모델 로딩 완료!")
+    print("임베딩 모델 로딩 완료!")
 
     # 3. Chroma.from_documents로 DB 생성 및 저장
     print(f"'{DB_DIR}' 폴더에 벡터 DB를 생성 및 저장합니다...")
@@ -89,7 +95,7 @@ def main():
         persist_directory=DB_DIR  # ⬅️ 이 폴더에 영구 저장
     )
     
-    print(f"\n🎉 총 {len(all_documents)}개의 문서가 '{DB_DIR}'에 성공적으로 저장되었습니다.")
+    print(f"\n총 {len(all_documents)}개의 문서가 '{DB_DIR}'에 성공적으로 저장되었습니다.")
     print("이제 RAG 시스템을 사용할 수 있습니다.")
 
 if __name__ == "__main__":
