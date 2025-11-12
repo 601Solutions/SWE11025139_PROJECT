@@ -15,6 +15,15 @@ sys.path.append(llm_dir)
 from llm_rag.retriver.retriever import get_rag_retriever
 
 def search_product_info():
+    """
+    초기화된 Retriever를 사용하여 3가지 유형의 쿼리(일반, 특정, 카테고리) 검색을 테스트.
+
+    Args:
+        None
+
+    Returns:
+        None (결과를 콘솔에 직접 출력.)
+    """
     # Retriever 초기화
     retriever = get_rag_retriever()
     if retriever is None:
