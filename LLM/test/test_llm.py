@@ -19,9 +19,13 @@ from llm_rag import config
 
 def test_rag_pipeline():
     """
-    RAG 파이프라인 전체 테스트
-    1. Retriever로 관련 문서 검색
-    2. LLM으로 답변 생성
+    미리 정의된 질문 목록을 바탕으로 전체 RAG 파이프라인(검색 + 답변 생성)을 테스트.
+
+    Args:
+        None
+
+    Returns:
+        None (결과를 콘솔에 직접 출력.)
     """
     print("=" * 60)
     print("RAG 시스템 테스트 시작")
@@ -88,7 +92,13 @@ def test_rag_pipeline():
 
 def test_retriever_only():
     """
-    Retriever만 단독 테스트
+    단일 테스트 질문을 사용하여 Retriever 모듈의 문서 검색 기능만 단독으로 테스트.
+
+    Args:
+        None
+
+    Returns:
+        None (검색된 문서를 콘솔에 직접 출력.)
     """
     print("=" * 60)
     print("Retriever 단독 테스트")
@@ -123,7 +133,13 @@ def test_retriever_only():
 
 def test_llm_only():
     """
-    LLM만 단독 테스트 (RAG 없이)
+    미리 정의된 Context와 질문을 바탕으로 LLM의 답변 생성 기능만 단독으로 테스트.
+
+    Args:
+        None
+
+    Returns:
+        None (생성된 답변을 콘솔에 직접 출력.)
     """
     print("=" * 60)
     print("LLM 단독 테스트")
@@ -148,7 +164,13 @@ def test_llm_only():
 
 def interactive_mode():
     """
-    대화형 모드 - 사용자가 직접 질문 입력
+    사용자가 직접 질문을 입력하고 RAG 파이프라인의 답변을 받는 대화형 모드를 실행.
+
+    Args:
+        None
+
+    Returns:
+        None (사용자 입력/종료 시까지 반복하며 결과를 콘솔에 출력.)
     """
     print("=" * 60)
     print("RAG 대화형 모드")
