@@ -1,19 +1,25 @@
-# llm_rag/llm/llm_loader.py
+#====================================================
+# Author: 601 Solutions
+# Title: llm_loader.py
+# llm을 langchain과 호환되도록 변환 후 load하는 코드
+#====================================================
+
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import config
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 
 _llm_instance = None
 
 def get_llm():
     """
-    LangChain과 호환되는 Google Gemini LLM 인스턴스 반환
-    Self-Query Retriever에서 사용
+    Google Gemini API를 사용한 응답 생성
     """
+    
     global _llm_instance
     if _llm_instance is None:
         _llm_instance = ChatGoogleGenerativeAI(

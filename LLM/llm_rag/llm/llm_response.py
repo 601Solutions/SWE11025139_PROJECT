@@ -1,10 +1,18 @@
+#====================================================
+# Author: 601 Solutions
+# Title: llm_response.py
+# llm 응답 생성 코드
+#====================================================
+
+
 import google.generativeai as genai
 import os
 import sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import config
 from .prompt_templates import RAG_PROMPT_TEMPLATE
 
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 _llm_client = None
 
 def get_llm_client():
