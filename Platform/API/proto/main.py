@@ -1,6 +1,13 @@
-# Web App
+#====================================================
+# Author: 601 Solutions
+# Title: main.py
+# 웹 앱 메인화면 
+#====================================================
+
 import sqlite3
+
 import streamlit as st
+
 from streamlit_option_menu import option_menu
 from dog_info import show_dog_info_page
 from chatbot import show_chatbot_page
@@ -8,9 +15,12 @@ from chatbot import show_chatbot_page
 DB_PATH = "pet_healthcare.db"
 
 def get_connection():
+    """데이터베이스와 루프를 연결"""
     return sqlite3.connect(DB_PATH, check_same_thread=False)
 
+
 def user_exists(username):
+    """기존에 동일 유저가 존재하는지 판단"""
     conn = get_connection()
     c = conn.cursor()
     c.execute("SELECT 1 FROM users WHERE username=?", (username,))
@@ -18,14 +28,18 @@ def user_exists(username):
     conn.close()
     return res
 
+
 def add_user(username: str, password: str):
+    """사용자를 DB에 새로 추가"""
     conn = get_connection()
     c = conn.cursor()
     c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
     conn.commit()
     conn.close()
 
+
 def verify_user(username: str, password: str) -> bool:
+    """로그인 검증"""
     conn = get_connection()
     c = conn.cursor()
     c.execute("SELECT password FROM users WHERE username = ?", (username,))
@@ -35,6 +49,34 @@ def verify_user(username: str, password: str) -> bool:
         return False
     return password == row[0]
 
+
+def logout():
+    """세션종료"""
+    st.session_state.is_logged_in = False
+    st.session_state.username = ""
+
+
+def get_user_id(username):
+    """세션에서 유저 정보 획득"""
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT id FROM users WHERE username = ?", (username,))
+    result = c.fetchone()
+    conn.close()
+    return result[0] if result else None
+
+
+def get_dog_name(owner_id):
+    """유저 정보에서 반려견 정보 획득"""
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT name FROM dogs WHERE owner_id=? ORDER BY id DESC LIMIT 1", (owner_id,))
+    result = c.fetchone()
+    conn.close()
+    return result[0] if result else "My Dog"
+
+
+### UI Section
 def login_ui():
     st.markdown("""
     <style>
@@ -528,26 +570,6 @@ def signup_ui():
     """, unsafe_allow_html=True)
 
 
-def logout():
-    st.session_state.is_logged_in = False
-    st.session_state.username = ""
-
-def get_user_id(username):
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("SELECT id FROM users WHERE username = ?", (username,))
-    result = c.fetchone()
-    conn.close()
-    return result[0] if result else None
-
-def get_dog_name(owner_id):
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("SELECT name FROM dogs WHERE owner_id=? ORDER BY id DESC LIMIT 1", (owner_id,))
-    result = c.fetchone()
-    conn.close()
-    return result[0] if result else "My Dog"
-
 def draw_sidebar():
     st.markdown("""
     <style>
@@ -619,6 +641,7 @@ def draw_sidebar():
         )
         return selected
 
+### Main Loop Section
 def main():
     st.set_page_config(page_title="내 손 안의 반려견 지킴이", page_icon="🐾", layout="wide")
     

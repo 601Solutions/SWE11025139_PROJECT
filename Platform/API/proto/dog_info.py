@@ -1,13 +1,22 @@
+#====================================================
+# Author: 601 Solutions
+# Title: dog_info.py
+# 강아지 정보 조회 화면
+#====================================================
+
 import streamlit as st
+
 import sqlite3
-from datetime import datetime
 
 DB_PATH = "pet_healthcare.db"
 
 def get_connection():
+    """데이터베이스와 루프를 연결"""
     return sqlite3.connect(DB_PATH, check_same_thread=False)
 
+
 def create_tables():
+    """DB 생성"""
     conn = get_connection()
     c = conn.cursor()
     c.execute('''
@@ -43,7 +52,9 @@ def create_tables():
     conn.commit()
     conn.close()
 
+
 def validate_dog_info(name, breed, age, weight):
+    """강아지 정보 입력 유효성 검증"""
     errors = []
     if not name or any(char in "!@#$%^&*()" for char in name):
         errors.append("강아지 이름을 올바르게 입력하세요(특수문자 제외).")
@@ -55,7 +66,9 @@ def validate_dog_info(name, breed, age, weight):
         errors.append("체중은 0보다 커야 합니다.")
     return errors
 
+
 def save_dog_info(name, breed, age, weight, health, owner_id):
+    """강아지 정보 저장"""
     conn = get_connection()
     c = conn.cursor()
     c.execute('''
@@ -67,7 +80,9 @@ def save_dog_info(name, breed, age, weight, health, owner_id):
     conn.close()
     return dog_id
 
+
 def update_dog_info(dog_id, breed, age, weight, health):
+    """강아지 정보 수정"""
     conn = get_connection()
     c = conn.cursor()
     
@@ -94,7 +109,9 @@ def update_dog_info(dog_id, breed, age, weight, health):
     conn.commit()
     conn.close()
 
+
 def get_user_id(username):
+    """세션에서 유저 정보 획득"""
     conn = get_connection()
     c = conn.cursor()
     c.execute("SELECT id FROM users WHERE username = ?", (username,))
@@ -102,7 +119,9 @@ def get_user_id(username):
     conn.close()
     return result[0] if result else None
 
+
 def get_dog_info(owner_id):
+    """유저 정보에서 반려견 정보 획득"""
     conn = get_connection()
     c = conn.cursor()
     c.execute("SELECT id, name, breed, age, weight, health FROM dogs WHERE owner_id=? ORDER BY id DESC LIMIT 1", (owner_id,))
@@ -110,7 +129,9 @@ def get_dog_info(owner_id):
     conn.close()
     return result
 
+
 def get_change_history(dog_id):
+    """강아지 정보 수정 이력 조회"""
     conn = get_connection()
     c = conn.cursor()
     c.execute("""
@@ -123,6 +144,8 @@ def get_change_history(dog_id):
     conn.close()
     return results
 
+
+# UI Section
 def show_dog_info_page():
     st.set_page_config(page_title="내 손 안의 반려견 지킴이", page_icon="🐾")
     st.markdown("""
@@ -244,4 +267,6 @@ def show_dog_info_page():
         else:
             st.info("등록된 강아지 정보가 없습니다.")
 
-create_tables()
+
+# Main Section
+create_tables() ## 오류 방지

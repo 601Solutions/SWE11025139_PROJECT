@@ -1,13 +1,17 @@
-# chatbot.py
+#====================================================
+# Author: 601 Solutions
+# Title: chatbot.py
+# 챗봇 대화 화면 
+#====================================================
 
 import streamlit as st
+
 import requests
 import sqlite3
 
-from chat_scenarios_keyword import conversation
 
 ## HTTP API 호출 주소 및 포트
-_URL = "http://127.0.0.1:8000"
+_URL = "http://127.0.0.1:8000" #localhost
 
 
 def get_user_id(username):
@@ -77,6 +81,7 @@ def get_message(input_message: str, owner_id: int = None) -> dict:
         }
 
 
+# UI Section
 def show_chatbot_page():
     """
     챗봇 페이지 UI
@@ -133,9 +138,8 @@ def show_chatbot_page():
                     "dog_name": response_data.get('dog_name')
                 })
     
-    
 
-
+#Main Section    
 if __name__ == "__main__":
     # 테스트용
     if "username" not in st.session_state:
