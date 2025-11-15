@@ -4,6 +4,11 @@
 # llm을 langchain과 호환되도록 변환 후 load하는 코드
 #====================================================
 
+"""
+Gemini LLM 모델 인스턴스를 관리
+
+'get_llm' 함수를 통해 ChatGoogleGenerativeAI 객체를 API 키와 설정을 한 번만 로드
+"""
 
 import google.generativeai as genai
 from langchain_google_genai import ChatGoogleGenerativeAI
