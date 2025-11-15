@@ -1,4 +1,9 @@
-# llm_rag/embeddings/vectorstore_chroma.py
+#====================================================
+# Author: 601 Solutions
+# Title: vectorstore_chroma.py
+# ChromaDB 벡터 저장소 클라이언트 및 컬렉션 관리
+#====================================================
+
 
 import chromadb
 from .. import config
@@ -7,6 +12,14 @@ _client = None
 _collection = None
 
 def get_vector_collection():
+    """
+    설정된 ChromaDB 컬렉션 로드하여 반환
+
+    Returns:
+        chromadb.Collection | None:
+        성공 시 ChromaDB 객체
+        실패 시 None
+    """
     global _client, _collection
     if _collection is None:
         if _client is None:
