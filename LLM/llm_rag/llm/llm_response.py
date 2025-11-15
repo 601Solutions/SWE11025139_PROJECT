@@ -4,6 +4,13 @@
 # llm 응답 생성 코드
 #====================================================
 
+"""
+Google Gemini LLM을 사용하여 RAG 파이프라인의 최종 응답 생성
+
+'get_llm_client'로 Gemini 클라이언트를 관리하고,
+'generate_response'로 컨텍스트와 질문을 받아 응답을 생성
+"""
+
 
 import google.generativeai as genai
 import os
@@ -16,6 +23,13 @@ sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 _llm_client = None
 
 def get_llm_client():
+    """
+    Gemini 객체 반환
+
+    Returns:
+        genai.GenerativeModel: 
+            설정(API 키, 모델명)이 적용된 Gemini 모델 클라이언트
+    """
     global _llm_client
     if _llm_client is None:
         genai.configure(api_key=config.GOOGLE_API_KEY)
