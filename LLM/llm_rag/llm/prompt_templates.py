@@ -1,4 +1,14 @@
-# llm_rag/llm/prompt_templates.py
+#====================================================
+# Author: 601 Solutions
+# Title: prompt_templates.py
+# llm 프롬프트 지시사항 작성 코드
+#====================================================
+
+"""
+어플리케이션의 다양한 부분에서 사용되는
+LLM용 프롬프트 템플릿 정의 및 관리
+"""
+
 
 from langchain_core.prompts import PromptTemplate
 
