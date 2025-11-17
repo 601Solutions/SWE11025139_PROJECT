@@ -1,4 +1,8 @@
-# api_server.py
+#====================================================
+# Author: 601 Solutions
+# Title: main.py
+# FastAPI를 통한 http 통신 형식 및 규범 정의
+#====================================================
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware

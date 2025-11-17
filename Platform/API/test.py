@@ -1,3 +1,9 @@
+#====================================================
+# Author: 601 Solutions
+# Title: test.py
+# FastAPI 테스트 코드, main 코드에 포함되지 않음.
+#====================================================
+
 from typing import Union
 
 from fastapi import FastAPI
