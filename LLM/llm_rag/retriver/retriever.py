@@ -44,7 +44,7 @@ def get_rag_retriever():
 
     print(f"'{config.DB_DIR}'에서 벡터 DB 로딩 중...")
     if not os.path.exists(config.DB_DIR):
-        print(f"❌ 오류: '{config.DB_DIR}' 폴더를 찾을 수 없습니다.")
+        print(f"오류: '{config.DB_DIR}' 폴더를 찾을 수 없습니다.")
         print("먼저 'database/ingest_data.py'를 실행하여 DB를 생성하세요.")
         return None
 
