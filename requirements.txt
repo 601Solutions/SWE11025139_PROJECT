@@ -1,1 +1,10 @@
 langchain_classic==1.0.0
+pandas
+langchain
+langchain-community
+langchain-google-genai
+google-generativeai
+chromadb
+sentence-transformers
+streamlit
+fastapi
