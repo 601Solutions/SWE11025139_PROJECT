@@ -44,11 +44,11 @@ _retriever = None
 def initialize_retriever():
     global _retriever
     if _retriever is None:
-        print("🔄 Retriever 초기화 중...")
+        print("Retriever 초기화 중...")
         _retriever = get_rag_retriever()
         if _retriever is None:
-            raise RuntimeError("❌ Retriever 초기화 실패!")
-        print("✅ Retriever 준비 완료!")
+            raise RuntimeError("Retriever 초기화 실패!")
+        print("Retriever 준비 완료!")
     return _retriever
 
 
@@ -89,9 +89,9 @@ class DetailedResponse(BaseModel):
 async def startup_event():
     try:
         initialize_retriever()
-        print("🚀 서버가 성공적으로 시작되었습니다!")
+        print("서버가 성공적으로 시작되었습니다!")
     except Exception as e:
-        print(f"⚠️ 경고: Retriever 초기화 실패 - {e}")
+        print(f"경고: Retriever 초기화 실패 - {e}")
 
 
 @app.get("/")
@@ -100,17 +100,17 @@ async def get_root():
     return {
         "status": "running",
         "retriever_initialized": _retriever is not None,
-        "message": "펫 헬스케어 AI 챗봇 API 서버 v2.0 (개인화 지원)"
+        "message": "펫 헬스케어 AI 챗봇 API 서버"
     }
 
 
 @app.post("/conversation", response_model=MessageResponse)
 async def post_message(request: MessageRequest):
     """
-    사용자 질문에 대한 AI 응답 생성 (강아지 정보 자동 반영)
+    사용자 질문에 대한 AI 응답 생성
     """
-    print(f"📝 받은 질문: {request.message}")
-    print(f"👤 Owner ID: {request.owner_id}")
+    print(f"받은 질문: {request.message}")
+    print(f"Owner ID: {request.owner_id}")
     
     # Retriever 확인
     global _retriever
@@ -131,24 +131,24 @@ async def post_message(request: MessageRequest):
             if dog_profile_dict:
                 dog_profile_text = format_dog_profile_for_prompt(dog_profile_dict)
                 dog_name = dog_profile_dict.get('name', 'My Dog')
-                print(f"🐕 강아지 정보 로드: {dog_name}")
+                print(f"강아지 정보 로드: {dog_name}")
         
         # 2. 관련 문서 검색
-        print("🔍 문서 검색 중...")
+        print("문서 검색 중...")
         retrieved_docs = _retriever.invoke(request.message)
-        print(f"✅ {len(retrieved_docs)}개 문서 검색 완료")
+        print(f"{len(retrieved_docs)}개 문서 검색 완료")
         
         # 3. Context 생성
         context = "\n\n".join([doc.page_content for doc in retrieved_docs[:5]])
         
         # 4. LLM 응답 생성 (강아지 정보 포함)
-        print("💬 AI 응답 생성 중...")
+        print("AI 응답 생성 중...")
         answer = generate_response(
             context=context,
             question=request.message,
-            dog_profile=dog_profile_text  # ✅ 강아지 정보 전달
+            dog_profile=dog_profile_text  # 강아지 정보 전달
         )
-        print("✅ 응답 생성 완료")
+        print("응답 생성 완료")
         
         return {
             "message": answer,
@@ -157,7 +157,7 @@ async def post_message(request: MessageRequest):
         }
         
     except Exception as e:
-        print(f"❌ 오류 발생: {str(e)}")
+        print(f"오류 발생: {str(e)}")
         raise HTTPException(status_code=500, detail=f"응답 생성 중 오류: {str(e)}")
 
 
@@ -166,7 +166,7 @@ async def post_message_detailed(request: MessageRequest):
     """
     상세 응답 (강아지 프로필 정보 포함)
     """
-    print(f"📝 받은 질문: {request.message}")
+    print(f"받은 질문: {request.message}")
     
     global _retriever
     if _retriever is None:
@@ -184,17 +184,17 @@ async def post_message_detailed(request: MessageRequest):
             dog_profile_dict = get_dog_profile(request.owner_id)
             if dog_profile_dict:
                 dog_profile_text = format_dog_profile_for_prompt(dog_profile_dict)
-                print(f"🐕 강아지 정보 로드: {dog_profile_dict['name']}")
+                print(f"강아지 정보 로드: {dog_profile_dict['name']}")
         
         # 2. 문서 검색
-        print("🔍 문서 검색 중...")
+        print("문서 검색 중...")
         retrieved_docs = _retriever.invoke(request.message)
         
         # 3. Context 생성
         context = "\n\n".join([doc.page_content for doc in retrieved_docs[:5]])
         
         # 4. LLM 응답 생성
-        print("💬 AI 응답 생성 중...")
+        print("AI 응답 생성 중...")
         answer = generate_response(
             context=context,
             question=request.message,
@@ -214,11 +214,11 @@ async def post_message_detailed(request: MessageRequest):
             "answer": answer,
             "retrieved_documents": doc_list,
             "question": request.message,
-            "dog_profile": dog_profile_dict  # ✅ 강아지 프로필 반환
+            "dog_profile": dog_profile_dict  #강아지 프로필 반환
         }
         
     except Exception as e:
-        print(f"❌ 오류 발생: {str(e)}")
+        print(f"오류 발생: {str(e)}")
         raise HTTPException(status_code=500, detail=f"응답 생성 중 오류: {str(e)}")
 
 
@@ -226,7 +226,7 @@ if __name__ == "__main__":
     import uvicorn
     
     print("\n" + "=" * 60)
-    print("🐕 펫 헬스케어 AI 챗봇 API 서버 v2.0 (개인화)")
+    print("펫 헬스케어 AI 챗봇 API 서버")
     print("=" * 60)
     
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
