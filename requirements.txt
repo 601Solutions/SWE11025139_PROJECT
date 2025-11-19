@@ -8,3 +8,5 @@ chromadb
 sentence-transformers
 streamlit
 fastapi
+torch==2.6.0
+lark
