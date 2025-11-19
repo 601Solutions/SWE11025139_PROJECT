@@ -6,13 +6,22 @@
 
 import pandas as pd
 import os
-from langchain.schema import Document
+from langchain_core.documents import Document
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
-SUPPLEMENT_CSV = 'data/processed/lifet_products_cleaned.csv'
-MEDICINE_CSV = 'data/raw/animal_medicine_data_sample.csv'
+# 현재 파일(ingest_data.py)의 절대 경로를 구함
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 상위 폴더(..)로 나가서 data 폴더로 접근하도록 경로 결합
+SUPPLEMENT_CSV = os.path.join(BASE_DIR, '../data/processed/lifet_products_cleaned.csv')
+MEDICINE_CSV = os.path.join(BASE_DIR, '../data/raw/animal_medicine_data_sample.csv')
+
+# 경로 정규화 (선택 사항, ../ 등을 실제 경로로 변환)
+SUPPLEMENT_CSV = os.path.normpath(SUPPLEMENT_CSV)
+MEDICINE_CSV = os.path.normpath(MEDICINE_CSV)
+
 EMBEDDING_MODEL = 'jhgan/ko-sbert-nli'
 DB_DIR = 'persistent_chroma_db' # DB가 저장
 
