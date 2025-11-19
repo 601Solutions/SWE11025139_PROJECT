@@ -23,8 +23,7 @@ SUPPLEMENT_CSV = os.path.normpath(SUPPLEMENT_CSV)
 MEDICINE_CSV = os.path.normpath(MEDICINE_CSV)
 
 EMBEDDING_MODEL = 'jhgan/ko-sbert-nli'
-DB_DIR = 'persistent_chroma_db' # DB가 저장
-
+DB_DIR = os.path.join(BASE_DIR, '../persistent_chroma_db') # DB가 저장
 
 def load_and_process_supplements(filepath):
     """
