@@ -31,16 +31,15 @@ _RAG_TEMPLATE_STRING = f"""{_SYSTEM_PREAMBLE}
 
 답변:"""
 
-# --- 3. 최종 PromptTemplate 객체 생성 (버그 수정 포함) ---
+# --- 3. 최종 PromptTemplate 객체 생성 ---
 
-# 변수명을 QA_CHAIN_PROMPT -> RAG_PROMPT로 더 명확하게 변경
-RAG_PROMPT = PromptTemplate(
-    input_variables=["dog_profile", "context", "question"],
-    template=_RAG_TEMPLATE_STRING,
+RAG_PROMPT_TEMPLATE = PromptTemplate(
+    input_variables=["dog_profile", "context", "question"],
+    template=_RAG_TEMPLATE_STRING,
 )
 
 
 QA_CHAIN_PROMPT = PromptTemplate(
     input_variables=["context", "question"],
-    template=RAG_PROMPT_TEMPLATE,
+    template=RAG_PROMPT_TEMPLATE.template,
 )

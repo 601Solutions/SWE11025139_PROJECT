@@ -10,6 +10,7 @@ from pydantic import BaseModel
 import os
 import sys
 from typing import Optional, List
+from contextlib import asynccontextmanager
 
 # Add the project root directory to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -85,13 +86,16 @@ class DetailedResponse(BaseModel):
 
 # ===== API 엔드포인트 =====
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
     try:
         initialize_retriever()
         print("서버가 성공적으로 시작되었습니다!")
     except Exception as e:
         print(f"경고: Retriever 초기화 실패 - {e}")
+    yield
+    # Shutdown (optional cleanup code here)
 
 
 @app.get("/")
@@ -229,4 +233,4 @@ if __name__ == "__main__":
     print("펫 헬스케어 AI 챗봇 API 서버")
     print("=" * 60)
     
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

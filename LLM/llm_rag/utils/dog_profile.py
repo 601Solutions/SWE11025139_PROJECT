@@ -14,24 +14,22 @@ def get_db_path():
     
     # 가능한 경로들 (우선순위순)
     possible_paths = [
-        # 1. proto 폴더의 DB (진짜 DB)
-        current_file.parent.parent.parent.parent / "Platform" / "API" / "proto" / "pet_healthcare.db",
+        # 1. UI 폴더의 DB (진짜 DB)
+        current_file.parent.parent.parent.parent / "Platform" / "UI" / "pet_healthcare.db",
         
-        # 2. API 폴더의 DB
-        current_file.parent.parent.parent.parent / "Platform" / "API" / "pet_healthcare.db",
+        # 2. UI 폴더의 DB
+        current_file.parent.parent.parent.parent / "Platform" / "UI" / "pet_healthcare.db",
         
         # 3. 현재 작업 디렉토리 기준
-        Path.cwd() / "proto" / "pet_healthcare.db",
+        Path.cwd() / "UI" / "pet_healthcare.db",
         Path.cwd() / "pet_healthcare.db",
         
-        # 4. 절대 경로 (최종 수단)
-        Path("C:/Users/sqpla/OneDrive/Desktop/PersonalProjects/SWE11025139_PROJECT/Platform/API/proto/pet_healthcare.db"),
     ]
     
     for path in possible_paths:
         if path.exists():
             abs_path = path.resolve()
-            print(f"✅ DB 파일 발견: {abs_path}")
+            print(f"DB 파일 발견: {abs_path}")
             
             # dogs 테이블 확인
             try:
@@ -41,19 +39,19 @@ def get_db_path():
                 has_dogs_table = c.fetchone() is not None
                 
                 if has_dogs_table:
-                    print(f"✅ dogs 테이블 확인됨")
+                    print(f"dogs 테이블 확인됨")
                     conn.close()
                     return str(abs_path)
                 else:
-                    print(f"⚠️ dogs 테이블 없음, 다음 경로 확인...")
+                    print(f"dogs 테이블 없음, 다음 경로 확인...")
                     conn.close()
             except Exception as e:
-                print(f"⚠️ DB 확인 중 오류: {e}")
+                print(f"DB 확인 중 오류: {e}")
                 continue
     
     # 기본값 (proto 폴더)
     default_path = Path("proto/pet_healthcare.db")
-    print(f"⚠️ DB를 찾지 못함. 기본 경로 사용: {default_path}")
+    print(f"DB를 찾지 못함. 기본 경로 사용: {default_path}")
     return str(default_path)
 
 DB_PATH = get_db_path()
