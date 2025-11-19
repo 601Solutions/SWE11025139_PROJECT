@@ -20,7 +20,7 @@ from langchain_classic.retrievers.self_query.base import SelfQueryRetriever
 import sys
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 import config
-from llm.llmj_loader import get_llm 
+from llm.llm_loader import get_llm 
 
 _retriever = None
 
