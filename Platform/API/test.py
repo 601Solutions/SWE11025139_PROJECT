@@ -1,29 +1,11 @@
 #====================================================
 # Author: 601 Solutions
-# Title: test.py
-# FastAPI 테스트 코드, main 코드에 포함되지 않음.
+# Title: API_test_case.py
+# FastAPI 테스트케이스 코드
 #====================================================
 
-from typing import Union
+from fastapi.testclient import TestClient
+from main import app
 
-from fastapi import FastAPI
-from pydantic import BaseModel
+client = TestClient(app)
 
-app = FastAPI()
-
-class Item(BaseModel):
-    name: str
-    price: float
-    is_offer: Union[bool, None] = None
-
-@app.get("/")
-async def read_root():
-    return {"Hello": "World"}
-
-@app.get("/items/{item_id}")
-async def read_item(item_id: int, q: Union[str, None]=None):
-    return {"item_id": item_id, "q": q}
-
-@app.put("/items/{item_id}")
-async def update_item(item_id: int, item: Item):
-    return {"item_name": item.name, "item_id": item_id}
