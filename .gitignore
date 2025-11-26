@@ -4,5 +4,5 @@ api.py
 *.pyc
 __pycache__/*
 venv/*
-#*.csv
+*.csv
 persistent_chroma_db

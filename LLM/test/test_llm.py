@@ -12,7 +12,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 llm_dir = os.path.dirname(current_dir)
 sys.path.append(llm_dir)
 
-from llm_rag.retriever.retriever import get_rag_retriever
+from llm_rag.retriver.retriever import get_rag_retriever
 from llm_rag.llm.llm_response import generate_response
 from llm_rag import config
 
