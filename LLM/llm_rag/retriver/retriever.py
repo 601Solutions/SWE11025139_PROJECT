@@ -8,7 +8,7 @@ import os
 import sys
 from langchain_chroma import Chroma # 최신 패키지 사용
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain.retrievers import MergerRetriever
+from langchain_classic.retrievers import MergerRetriever
 from langchain_classic.chains.query_constructor.base import AttributeInfo
 from langchain_classic.retrievers.self_query.base import SelfQueryRetriever
 
