@@ -14,50 +14,56 @@ sys.path.append(llm_dir)
 
 from llm_rag.retriver.retriever import get_rag_retriever
 
-def search_product_info():
-    """
-    초기화된 Retriever를 사용하여 3가지 유형의 쿼리(일반, 특정, 카테고리) 검색을 테스트.
+import time
 
-    Args:
-        None
+def run_test_case(tc_id, description, query, time_limit_sec, check_func=None):
+    print("--------------------------------------------------")
 
-    Returns:
-        None (결과를 콘솔에 직접 출력.)
-    """
-    # Retriever 초기화
+    print(f"\n=== TC {tc_id}: {description} ===")
     retriever = get_rag_retriever()
     if retriever is None:
         print("Retriever 초기화 실패")
-        return
+        return False
 
-    # 1. 일반적인 검색 예시
-    print("\n=== 일반 검색 예시 ===")
-    query = "강아지 관절 건강에 좋은 제품 알려주세요"
-    docs = retriever.get_relevant_documents(query)
-    for i, doc in enumerate(docs, 1):
-        print(f"\n검색결과 {i}:")
-        print(f"내용: {doc.page_content[:200]}...")
-        print(f"제품명: {doc.metadata.get('product_name', 'N/A')}")
-        print(f"출처: {doc.metadata.get('source_type', 'N/A')}")
+    start = time.time()
+    try:
+        docs = retriever.invoke(query)
+        elapsed = time.time() - start
+        if elapsed > time_limit_sec:
+            print(f"FAIL: 제한 시간 {time_limit_sec}s 초과 ({elapsed:.2f}s)")
+            return False
 
-    # 2. 특정 제품 검색 예시
-    print("\n=== 특정 제품 검색 예시 ===")
-    specific_query = "더 릴렉스라는 제품에 대해 알려주세요"
-    specific_docs = retriever.get_relevant_documents(specific_query)
-    for i, doc in enumerate(specific_docs, 1):
-        print(f"\n검색결과 {i}:")
-        print(f"제품명: {doc.metadata.get('product_name', 'N/A')}")
-        print(f"내용: {doc.page_content[:200]}...")
+        if check_func:
+            if not check_func(docs):
+                print("FAIL: 결과 검증 실패")
+                return False
 
-    # 3. 건강기능식품만 검색 예시
-    print("\n=== 건강기능식품 검색 예시 ===")
-    supplement_query = "반려동물용 건강기능식품 중에서 면역력 강화에 좋은 제품 추천"
-    supplement_docs = retriever.get_relevant_documents(supplement_query)
-    for i, doc in enumerate(supplement_docs, 1):
-        print(f"\n검색결과 {i}:")
-        print(f"제품명: {doc.metadata.get('product_name', 'N/A')}")
-        print(f"출처: {doc.metadata.get('source_type', 'N/A')}")
-        print(f"내용: {doc.page_content[:200]}...")
+        print(f"PASS ({elapsed:.2f}s)")
+        return True
+
+    except Exception as e:
+        print(f"ERROR: {e}")
+        return False
+
+
+def check_non_empty(docs):
+    return len(docs) > 0
+
+
+def main():
+    tests = [
+        ("R3-1", "단순 용법 검색 (Baseline)", "넥스가드 스펙트라 투여 주기가 어떻게 돼?", 30, check_non_empty),
+        ("R3-2", "체중 기반 용량 계산 (High Load)", "우리 강아지한테 아포퀠몇 mg 먹여야 해?", 30, check_non_empty),
+        ("R3-3", "다중 조건/금기 검색 (Filter)", "임신 중인 3살 리트리버(전혁건)인데,구충제 파나쿠어 먹여도 안전해?", 30, check_non_empty),
+        ("R3-4", "긴 증상 텍스트 분석 (Long Context)",
+         "3일 전부터 사료 거부, 어제는 노란 토 2회, 오늘은 설사함. 활력은 좀 떨어짐... 이거 무슨 병일까?", 30, check_non_empty),
+        ("R3-5", "오타/유의어 처리 속도", "프론트라인대신프로트라인 써도 진드기 죽어?", 30, check_non_empty),
+        ("R3-6", "연속 질문 (캐싱 효율)", "그럼20kg는 얼마나 먹여?", 30, check_non_empty),
+    ]
+
+    for tc_id, desc, query, limit, check in tests:
+        run_test_case(tc_id, desc, query, limit, check)
+
 
 if __name__ == "__main__":
-    search_product_info()
+    main()
