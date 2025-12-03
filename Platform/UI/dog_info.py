@@ -54,17 +54,58 @@ def create_tables():
 
 
 def validate_dog_info(name, breed, age, weight):
-    """강아지 정보 입력 유효성 검증"""
     errors = []
     if not name or any(char in "!@#$%^&*()" for char in name):
         errors.append("강아지 이름을 올바르게 입력하세요(특수문자 제외).")
+
     if not breed:
         errors.append("품종을 입력하세요.")
-    if age <= 0:
-        errors.append("나이는 0보다 커야 합니다.")
-    if weight <= 0:
-        errors.append("체중은 0보다 커야 합니다.")
+
+    try:
+        age_int = int(age)
+        if age_int <= 0:
+            errors.append("나이가 범위를 벗어났습니다.")
+        elif age_int > 20:
+            errors.append("나이가 범위를 벗어났습니다.")
+    except (ValueError, TypeError):
+        errors.append("나이는 숫자여야 합니다.")
+
+    try:
+        weight_float = float(weight)
+        if weight_float <= 0:
+            errors.append("잘못된 숫자입니다.")
+    except (ValueError, TypeError):
+        errors.append("체중은 숫자여야 합니다.")
+
+    # 품종 리스트 검증
+    valid_breeds = [
+        "골든리트리버",
+        "시바견",
+        "치와와",
+        "비글",
+        "믹스견",
+        "래브라도 리트리버",
+        "저먼 셰퍼드",
+        "불독",
+        "포메라니안",
+        "복서",
+        "닥스훈트",
+        "요크셔 테리어",
+        "시추",
+        "파피용",
+        "말티즈",
+        "달마시안",
+        "퍼그",
+        "보더 콜리",
+        "미니어처 슈나우저",
+        "그레이하운드"
+    ]
+
+    if breed not in valid_breeds:
+        errors.append("유효하지 않은 품종입니다.")
+
     return errors
+
 
 
 def save_dog_info(name, breed, age, weight, health, owner_id):

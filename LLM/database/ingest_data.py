@@ -8,7 +8,7 @@ import pandas as pd
 import os
 import chromadb
 from langchain_core.documents import Document
-from langchain_chroma import Chroma # 패키지명 확인
+from langchain_community.vectorstores import Chroma 
 from langchain_huggingface import HuggingFaceEmbeddings # 최신 패키지 사용 권장
 
 # ---------------------------------------------------
