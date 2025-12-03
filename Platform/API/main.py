@@ -34,9 +34,9 @@ async def lifespan(app: FastAPI):
         if retriever is None:
             raise RuntimeError("Retriever 초기화 실패!")
         app.state.retriever = retriever  # app.state에 저장
-        print("✅ Retriever 준비 완료!")
+        print("Retriever 준비 완료!")
     except Exception as e:
-        print(f"❌ 초기화 실패: {e}")
+        print(f"초기화 실패: {e}")
         raise
     
     yield
