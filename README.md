@@ -6,6 +6,7 @@
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=Streamlit&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=FastAPI&logoColor=white)
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_DB-orange?style=flat-square)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-886FBF?logo=googlegemini&logoColor=fff)
 
 ---
 ![main](main.png)
@@ -14,11 +15,11 @@
 
 '찌낌이'는 대규모 언어 모델(LLM)과 검색 증강 생성(RAG) 기술을 결합하여 개발된 **강아지 전용 헬스케어 서비스**입니다. 
 
-반려견의 증상을 입력하면 AI가 상태를 분석하여 적절한 조언을 제공하고, 증상에 맞는 의약품을 추천해주는 **맞춤형 복약 지도 시스템**을 통해 소중한 반려동물의 건강을 지켜드립니다.
+반려견의 증상을 입력하면 AI가 상태를 분석하여 적절한 조언을 제공하고, 증상에 맞는 의약품을 추천해주는 **맞춤형 의약품 안내 및 건기식 추천 시스템**을 통해 소중한 반려동물의 건강을 지켜드립니다.
 
 ### ✨ Key Features
-* **🩺 AI 건강 상담:** RAG 기술을 활용하여 검증된 수의학 정보를 바탕으로 챗봇 상담을 제공합니다.
-* **💊 복약 지도 시스템:** 반려견의 상태와 증상에 따라 최적의 의약품을 추천하고 주의사항을 안내합니다.
+* **🩺 AI 기반 의약품 안내:** 반려견의 상태와 증상에 따라 최적의 의약품을 소개하고 주의사항을 안내합니다.
+* **💊 AI 기반 건강기능식품 추천 및 안내:** 반려견의 상태와 증상에 따라 최적의 건강기능식품 추천합니다.
 
 ---
 
@@ -59,8 +60,8 @@
 
 Repository를 클론하고 프로젝트 폴더로 이동합니다.
 ```bash
-git clone [레포지토리 URL을 입력하세요]
-cd [프로젝트 폴더명]
+git clone https://github.com/601Solutions/SWE11025139_PROJECT.git
+cd SWE11025139_PROJECT
 ```
 
 가상 환경(Virtual Environment)을 생성하고 활성화합니다.
