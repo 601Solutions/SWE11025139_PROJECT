@@ -8,7 +8,7 @@ from pathlib import Path
 def get_db_path():
     """
     실제 DB 파일 경로 찾기
-    절대 경로(CWD)를 기준으로 Platform/UI/pet_healthcare.db 검색.
+    project_root/pet_healthcare.db
     """
     # 1. 스크립트를 실행하는 현재 위치의 절대 경로 (Current Working Directory)
     # 예: SWE11025139_PROJECT
