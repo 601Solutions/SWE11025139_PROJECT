@@ -122,16 +122,21 @@ def save_dog_info(name, breed, age, weight, health, owner_id):
     return dog_id
 
 
-def update_dog_info(dog_id, breed, age, weight, health):
+def update_dog_info(dog_id, name, breed, age, weight, health):
     """강아지 정보 수정"""
     conn = get_connection()
     c = conn.cursor()
     
-    c.execute("SELECT breed, age, weight, health FROM dogs WHERE id=?", (dog_id,))
+    c.execute("SELECT name, breed, age, weight, health FROM dogs WHERE id=?", (dog_id,))
     old_data = c.fetchone()
     
     if old_data:
-        old_breed, old_age, old_weight, old_health = old_data
+        old_name, old_breed, old_age, old_weight, old_health = old_data
+        if old_name != name:
+            c.execute(
+                "INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
+                (dog_id, "Name", old_name, name)
+            )
         if old_breed != breed:
             c.execute("INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
                      (dog_id, "Breed", old_breed, breed))
@@ -145,8 +150,8 @@ def update_dog_info(dog_id, breed, age, weight, health):
             c.execute("INSERT INTO change_history(dog_id, field_name, old_value, new_value) VALUES (?,?,?,?)",
                      (dog_id, "Status", old_health or "", health or ""))
     
-    c.execute("UPDATE dogs SET breed=?, age=?, weight=?, health=? WHERE id=?",
-             (breed, age, weight, health, dog_id))
+    c.execute("UPDATE dogs SET name=?, breed=?, age=?, weight=?, health=? WHERE id=?",
+             (name, breed, age, weight, health, dog_id))
     conn.commit()
     conn.close()
 
@@ -220,11 +225,14 @@ def show_dog_info_page():
     # === 편집 모드 ===
     if st.session_state.edit_mode:
         with st.container(border=True):  # border=True로 카드 효과
+
+            default_name = dog_info[1] if dog_info else "My Dog"
             default_breed = dog_info[2] if dog_info else ""
             default_age = dog_info[3] if dog_info else 0
             default_weight = dog_info[4] if dog_info else 0.0
             default_health = dog_info[5] if dog_info else ""
-            
+
+            st.text_input("강아지 이름", value=default_name, key="input_name")
             st.text_input("견종", value=default_breed, key="input_breed")
             st.number_input("나이", min_value=0, value=int(default_age), key="input_age")
             st.number_input("체중", min_value=0.0, step=0.1, value=float(default_weight), key="input_weight")
@@ -235,21 +243,22 @@ def show_dog_info_page():
                 done = st.button("완료", type="primary", use_container_width=True)
 
             if done:
+                name = st.session_state.input_name
                 breed = st.session_state.input_breed
                 age = st.session_state.input_age
                 weight = st.session_state.input_weight
                 status = st.session_state.input_status
                 
-                errors = validate_dog_info("My Dog", breed, age, weight)
+                errors = validate_dog_info(name, breed, age, weight)
                 if errors:
                     for err in errors:
                         st.error(err)
                 else:
                     if dog_info:
-                        update_dog_info(dog_info[0], breed, age, weight, status)
+                        update_dog_info(dog_info[0], name, breed, age, weight, status)
                         st.success("강아지 정보가 수정되었습니다.")
                     else:
-                        save_dog_info("My Dog", breed, age, weight, status, user_id)
+                        save_dog_info(name, breed, age, weight, status, user_id)
                         st.success("강아지 정보가 저장되었습니다.")
                     st.session_state.edit_mode = False
                     st.rerun()
@@ -260,6 +269,7 @@ def show_dog_info_page():
             st.markdown('<p class="card-title">✦ 우리 강아지</p>', unsafe_allow_html=True)
             
             if dog_info:
+                st.markdown(f"**이름:** {dog_info[1]}")
                 st.markdown(f"**견종:** {dog_info[2]}")
                 st.markdown(f"**나이:** {dog_info[3]}")
                 st.markdown(f"**체중:** {dog_info[4]:.1f}")

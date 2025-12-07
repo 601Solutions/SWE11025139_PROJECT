@@ -22,7 +22,6 @@ def get_db_path():
         
         # 3. 현재 작업 디렉토리 기준
         Path.cwd() / "UI" / "pet_healthcare.db",
-        Path.cwd() / "pet_healthcare.db",
         
     ]
     
@@ -48,11 +47,7 @@ def get_db_path():
             except Exception as e:
                 print(f"DB 확인 중 오류: {e}")
                 continue
-    
-    # 기본값 (proto 폴더)
-    default_path = Path("proto/pet_healthcare.db")
-    print(f"DB를 찾지 못함. 기본 경로 사용: {default_path}")
-    return str(default_path)
+
 
 DB_PATH = get_db_path()
 
