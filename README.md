@@ -60,8 +60,8 @@
 
 Repository를 클론하고 프로젝트 폴더로 이동합니다.
 ```bash
-git clone [레포지토리 URL을 입력하세요]
-cd [프로젝트 폴더명]
+git clone https://github.com/601Solutions/SWE11025139_PROJECT.git
+cd SWE11025139_PROJECT
 ```
 
 가상 환경(Virtual Environment)을 생성하고 활성화합니다.
