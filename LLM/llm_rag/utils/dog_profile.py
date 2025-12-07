@@ -8,46 +8,46 @@ from pathlib import Path
 def get_db_path():
     """
     실제 DB 파일 경로 찾기
-    Platform/API/proto/pet_healthcare.db
+    절대 경로(CWD)를 기준으로 Platform/UI/pet_healthcare.db 검색.
     """
-    current_file = Path(__file__)
+    # 1. 스크립트를 실행하는 현재 위치의 절대 경로 (Current Working Directory)
+    # 예: SWE11025139_PROJECT
+    execution_path = Path.cwd()
     
-    # 가능한 경로들 (우선순위순)
-    possible_paths = [
-        # 1. UI 폴더의 DB (진짜 DB)
-        current_file.parent.parent.parent.parent / "Platform" / "UI" / "pet_healthcare.db",
-        
-        # 2. UI 폴더의 DB
-        current_file.parent.parent.parent.parent / "Platform" / "UI" / "pet_healthcare.db",
-        
-        # 3. 현재 작업 디렉토리 기준
-        Path.cwd() / "UI" / "pet_healthcare.db",
-        
-    ]
-    
-    for path in possible_paths:
-        if path.exists():
-            abs_path = path.resolve()
-            print(f"DB 파일 발견: {abs_path}")
-            
-            # dogs 테이블 확인
-            try:
-                conn = sqlite3.connect(str(abs_path))
-                c = conn.cursor()
-                c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='dogs'")
-                has_dogs_table = c.fetchone() is not None
-                
-                if has_dogs_table:
-                    print(f"dogs 테이블 확인됨")
-                    conn.close()
-                    return str(abs_path)
-                else:
-                    print(f"dogs 테이블 없음, 다음 경로 확인...")
-                    conn.close()
-            except Exception as e:
-                print(f"DB 확인 중 오류: {e}")
-                continue
+    print(f"현재 실행 경로(CWD): {execution_path}")
 
+    # 2. 목표 DB 경로 설정 (OS 호환성을 위해 pathlib의 / 연산자 사용)
+    # 실행 경로 하위의 Platform -> UI -> pet_healthcare.db
+    target_db_path = execution_path / "pet_healthcare.db"
+    # 가능한 경로들 (우선순위순)
+# 3. 경로 존재 여부 및 테이블 확인
+    if target_db_path.exists():
+        abs_path = target_db_path.resolve()
+        print(f"DB 파일 발견: {abs_path}")
+        
+        try:
+            # dogs 테이블 확인
+            conn = sqlite3.connect(str(abs_path))
+            c = conn.cursor()
+            c.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='dogs'")
+            has_dogs_table = c.fetchone() is not None
+            conn.close()
+            
+            if has_dogs_table:
+                print(f"dogs 테이블 확인됨")
+                return str(abs_path)
+            else:
+                print(f"경고: DB 파일은 있으나 dogs 테이블이 없습니다.")
+                return str(abs_path) # 파일은 있으므로 경로는 반환
+                
+        except Exception as e:
+            print(f"DB 연결 중 오류 발생: {e}")
+            return None
+    else:
+        print(f"오류: DB 파일을 찾을 수 없습니다.")
+        print(f"탐색 경로: {target_db_path}")
+        print("프로젝트 최상위 폴더(SWE11025139_PROJECT)에서 스크립트를 실행했는지 확인해주세요.")
+        return None
 
 DB_PATH = get_db_path()
 

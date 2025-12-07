@@ -21,7 +21,7 @@ import dotenv
 dotenv.load_dotenv()
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-EMBEDDING_MODEL = 'jhgan/ko-sbert-nli'
+EMBEDDING_MODEL = "jhgan/ko-sbert-nli"
 DB_DIR = PROJECT_ROOT / 'persistent_chroma_db' 
 LLM_MODEL = "gemini-2.5-flash"
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
