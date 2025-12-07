@@ -8,7 +8,7 @@ from pathlib import Path
 def get_db_path():
     """
     실제 DB 파일 경로 찾기
-    Platform/API/proto/pet_healthcare.db
+    Platform/API/pet_healthcare.db
     """
     current_file = Path(__file__)
     
